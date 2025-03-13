@@ -28,7 +28,7 @@ int PauseExit::Navigate() {
             if (i == pointing) {
                 wattron(menu_win_pause, A_BOLD);
             }
-            mvwprintw(menu_win_pause, i + 1, 2, options[i].c_str());
+            //mvwprintw(menu_win_pause, i + 1, 2, options[i].c_str());
             wattroff(menu_win_pause,A_BOLD);
         }
         wrefresh(menu_win_pause);

@@ -32,3 +32,33 @@ void Board::displayBoard(){
     }
     wrefresh(snake_win);
 }
+
+void Board::displaySnake(){
+    curs_set(0);
+    //timeout(10);
+    halfdelay(5);        // ciò che dipende dal livello
+    //nodelay(snake_win, true);
+    //int direction = 2;
+    bool end = false;
+    while (!end) {
+      int val= wgetch(Board::snake_win);
+        if (Position::Dups() == true) {        // eredito dups che controlla se snake ha colpito se stesso
+            end = true;
+            mvprintw(0, 0, "%s", "MORTO! - SERPENTE SI E' MORSO");
+            refresh();
+        }
+        else if (val == 16) {    // ctrl P
+            end = true;
+            mvprintw(0, 0, "%s", "PAUSA");
+            refresh();
+        }
+        else {
+            if (val != ERR) {
+              Snake::move(val);
+              }
+        }
+        //napms(200);
+        Board::displayBoard();
+}
+
+  }

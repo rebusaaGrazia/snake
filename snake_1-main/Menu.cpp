@@ -28,7 +28,7 @@ int Menu::Navigate() {
             if (i == pointing) {
                 wattron(menu_win, A_BOLD);
             }
-            mvwprintw(menu_win, i + 1, 2, options[i].c_str());
+            //mvwprintw(menu_win, i + 1, 2, options[i].c_str());
             wattroff(menu_win,A_BOLD);
         }
         wrefresh(menu_win);
