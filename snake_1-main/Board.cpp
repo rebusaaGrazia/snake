@@ -33,6 +33,7 @@ void Board::displayBoard(){
     wrefresh(snake_win);
 }
 
+/*
 void Board::displaySnake(){
     curs_set(0);
     //timeout(10);
@@ -61,4 +62,4 @@ void Board::displaySnake(){
         Board::displayBoard();
 }
 
-  }
+  }*/

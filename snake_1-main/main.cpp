@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "PauseExit.h"
 using namespace std;
 #include <ncurses.h>
@@ -13,7 +14,7 @@ int main(int argc, char *argv[]) {
     refresh();
     noecho();
     keypad(stdscr, true);
-/*
+
     Menu start = Menu();
     int i = start.Navigate(); //menu che implementa il lancio del gioco
     if (i == 0) {
@@ -21,17 +22,16 @@ int main(int argc, char *argv[]) {
         Snake snake = Snake();
         snake.display();
         snake.move();
-
-
+        //Board board = Board();
+        //board.displayBoard();
     }
     else if (i == 1) {
         attron(A_BOLD);
         printw("Terminazione Programma - Premere qualsiasi Tasto");
         attroff(A_BOLD);
-    }*/
+    }
 
-    Board board = Board();
-    board.displaySnake();
+
 
 
 
