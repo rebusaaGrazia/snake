@@ -19,11 +19,12 @@ int main(int argc, char *argv[]) {
     int i = start.Navigate(); //menu che implementa il lancio del gioco
     if (i == 0) {
         //printw("Welcome to Snake!");
-        Snake snake = Snake();
-        snake.display();
-        snake.move();
-        //Board board = Board();
-        //board.displayBoard();
+        //Snake snake = Snake();
+        //snake.display();
+        //snake.move();
+        Board board = Board();
+        board.displaySnake();
+        //board.move();
     }
     else if (i == 1) {
         attron(A_BOLD);

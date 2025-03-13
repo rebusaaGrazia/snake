@@ -35,7 +35,12 @@ public:
 
     void onsegment();
 
-    void move();
+    void move(int ch, int direction);
+
+    void moveup();
+    void movedown();
+    void moveleft();
+    void moveright();
 };
 
 

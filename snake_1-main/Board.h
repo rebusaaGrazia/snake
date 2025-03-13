@@ -6,17 +6,21 @@
 #define BOARD_H
 
 #include "Snake.h"
-
+#include <ncurses.h>
 
 class Board: public Snake {
 protected:
+  WINDOW *win;
 
   int coordApple[1][2];
 public:
   Board();
 
-  void randPositionApple();
+  void generateApple();
+  void displayApple();
   void displayBoard();
+  void displaySnake();
+  void move();
 
 };
 
