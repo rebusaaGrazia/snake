@@ -1,7 +1,3 @@
-//
-// Created by Gabriele Preti on 02/03/25.
-//
-
 #ifndef BOARD_H
 #define BOARD_H
 
@@ -13,13 +9,16 @@ protected:
   WINDOW *win;
 
   int coordApple[1][2];
+
 public:
+  bool gameOver;
+  bool gamePaused;
   Board();
 
   void generateApple();
   void displayApple();
-  void displayBoard();
-  void displaySnake();
+  void displayBoard(int& punteggio);
+  int displaySnake(int vel);
   void move();
 
 };

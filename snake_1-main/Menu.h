@@ -10,18 +10,17 @@ using namespace std;
 #include <string>
 #include "default_functions.h"
 #include "Constant.h"
+#include "WindowScelta.h"
 
 
-class Menu { //CLASSE DI APPOGGIO PER IL MIO PROGETTO
+class Menu : WindowScelta{ //CLASSE DI APPOGGIO PER IL MIO PROGETTO
             //PROGETTO FINALE USA QUELLA DI MIRKO GIÀ IMPOSTATA CORRETTAMENTE
 protected:
-    std::string options[2];
-    int pointing;
-    int ops_firstmenu;
-    WINDOW *menu_win;
+    string menuOption[2];
 public:
+    bool endGame;
     Menu();
-    int Navigate();
+    void display();
 
 };
 
