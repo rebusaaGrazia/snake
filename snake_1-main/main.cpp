@@ -27,12 +27,13 @@ int main(int argc, char *argv[]) {
         	Board board = Board();
 
         	// devo mandargli velocita di gioco e altro ?
-        	punteggio=board.displaySnake(5);
+        	punteggio=board.displaySnake(2);
         	if (board.gameOver){
           		// gameOver
-                wrefresh(stdscr);  // inutile?
+                        clear();
                 GameOver gameOver = GameOver();
                 gameOver.display();
+                //wrefresh(stdscr);
                 END=gameOver.endGame;
 
                 // salvataggio dati del livello finito
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
 
     		}else if (board.gamePaused){
                   // game paused
-                  wrefresh(stdscr);  // inutile?
+                  //wclear(stdscr);
                   PauseExit pause = PauseExit();
                   pause.display();
                   END=pause.endGame;
@@ -53,6 +54,8 @@ int main(int argc, char *argv[]) {
         	attroff(A_BOLD);
             END=menu.endGame;
     	}
+        //wrefresh(stdscr);
+        wclear(stdscr);
     }
 
 

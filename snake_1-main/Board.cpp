@@ -4,7 +4,7 @@ using namespace std;
 #include <ncurses.h>
 #include "Board.h"
 #include "Constant.h"
-
+#include "PausaExit.h"
 
 Board::Board(): Snake::Snake(){  // >>
   Board::coordApple[0][0] = 0;
@@ -14,19 +14,40 @@ Board::Board(): Snake::Snake(){  // >>
   gamePaused = false;
   win = newwin(rows+2, cols+2, xPosCenter, yPosCenter);
   keypad(win, true);
+  init_pair(1, COLOR_RED, COLOR_BLACK);
+  start_color();
   srand(time(0));
 }
 
 // genera casualmente la posizione di $
-void Board::generateApple(){        // >>
-    srand(time(0));
-    Board::coordApple[0][0] = rand()%rows;
-    Board::coordApple[0][1] = rand()%cols;
+// modifica alla funzione generateApple
+void Board::generateApple() {
+    bool validPosition = false;
+
+    while (!validPosition) {
+        Board::coordApple[0][0] = rand() % rows;
+        Board::coordApple[0][1] = rand() % cols;
+
+        // Verifica se la mela non si sovrappone al corpo del serpente
+        validPosition = true;
+        for (int i = 0; i < snake_length; i++) { // Assuming you have a function to get the length of the snake
+            if (coordApple[0][0] == matrix[i][0] && coordApple[0][1] == matrix[i][1]) {
+                validPosition = false;
+                break;
+            }
+        }
+    }
 }
+
 
 // fa il display della $
 void Board::displayApple(){        // >>
+  start_color();
+  init_pair(1, COLOR_RED, COLOR_BLACK);
+  wattron(win,COLOR_PAIR(1));
   mvwprintw(win, coordApple[0][0]+1, coordApple[0][1]+1, "$");
+  wattroff(win,COLOR_PAIR(1));
+
 }
 
 // stampa l'area di gioco : serpente e mela
@@ -36,35 +57,39 @@ void Board::displayBoard(int& punteggio){        // >>
     bool found=false;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
+          	wattron(win,A_REVERSE);
             if (matrix[i][j] == true) {
               ch='o';
               if (head_row==i && head_col==j){
-                if (head_row==coordApple[0][0] && head_col==coordApple[0][1]) {
+                ch = '@';
+              }
+              if (head_row==coordApple[0][0] && head_col==coordApple[0][1]) {
                   // mela trovata
                   Board::generateApple();
                   found=true;
-                  ch='R';
 
                   // incremento punteggio
                   punteggio++;
-                } else ch = '@';
-              }else{
-
               }
-
             }else{
+              wattroff(win, A_REVERSE);
               ch=' ';
             }
-			if (!found) Board::displayApple();		// se la mela non è stata mangiata fai il display
-            else {									// se no fai il display della mela al turno dopo
+			if (!found) {
               // mela trovata
-              wattron(win, A_REVERSE);
+              wattroff(win, A_REVERSE);			// evidenzio il serpente
               found=false;
             }
+            init_pair(2, COLOR_BLUE, COLOR_BLACK);
+            wattron(win, A_BOLD);
+            wattron(win,COLOR_PAIR(2));
             mvwprintw(win, i+1, j+1, "%c", ch);
+            wattroff(win, COLOR_PAIR(2));
             wattroff(win, A_REVERSE);
+            wattron(win, A_BOLD);
         }
     }
+    if (!found) Board::displayApple(); // se la mela non è stata mangiata (se no sovrapporrebbe al serpente)
     wrefresh(win);
 }
 
@@ -83,12 +108,14 @@ int Board::displaySnake(int vel){
             gameOver = true;
             refresh();
         } else if (ch == 16) {    // ctrl P
-            end = true;
             mvprintw(0, 0, "%s", "PAUSA");
             gamePaused = true;
+
+            PauseExit pause = PauseExit();
+            pause.display();
+            end = =pause.endGame;
             refresh();
-        }
-        else {
+        } else {
             if (ch != ERR) {
                 switch (ch) {
                     case KEY_UP:

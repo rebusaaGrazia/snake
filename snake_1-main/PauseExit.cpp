@@ -11,7 +11,7 @@ PauseExit::PauseExit() : WindowScelta(pauseOptions, "Pausa"){
 
 void PauseExit::display() {
     int i=WindowScelta::windowDisplay(pauseOption, pauseOptions);
-    if (i==3) endGame=true;
+    if (i==3 || i!=0) endGame=true;        // da sistemare
     else endGame=false;
 }
 
