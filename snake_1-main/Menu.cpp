@@ -8,7 +8,7 @@ Menu::Menu(): WindowScelta(menuOptions, "Menu") {
 }
 
 void Menu::display() {
-    int i=WindowScelta::windowDisplay(menuOption, menuOptions);
+    int i=WindowScelta::windowDisplay(menuOption, menuOptions, 0);
     if (i==1) endGame=true;
     else endGame=false;
 }

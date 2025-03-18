@@ -20,19 +20,21 @@ int main(int argc, char *argv[]) {
     bool END=false;
     while (!END) {
         wrefresh(stdscr);
+
       	//menu principale del gioco
       	Menu menu = Menu();          // << soluzione del non refresh da mirko
     	menu.display();
-    	if (!menu.endGame) {
-        	Board board = Board();
 
-        	// devo mandargli velocita di gioco e altro ?
+    	if (!menu.endGame) {
+        	Board board = Board();	// da sistemare con le opzioni del menu di mirko
+
+        	// devo mandargli velocita di gioco
         	punteggio=board.displaySnake(2);
         	if (board.gameOver){
           		// gameOver
-                        clear();
+                clear();
                 GameOver gameOver = GameOver();
-                gameOver.display();
+                gameOver.display(punteggio);
                 //wrefresh(stdscr);
                 END=gameOver.endGame;
 
@@ -42,16 +44,13 @@ int main(int argc, char *argv[]) {
     		}else if (board.gamePaused){
                   // game paused
                   //wclear(stdscr);
-                  PauseExit pause = PauseExit();
-                  pause.display();
-                  END=pause.endGame;
+                  //PauseExit pause = PauseExit();
+                  //pause.display();
+                  //END=pause.endGame;
                   // nessun azzeramento dei dati
             }
-            printw("ultimo punteggio: %d", punteggio);
+            //printw("ultimo punteggio: %d", punteggio);
      	} else if (menu.endGame) {
-        	attron(A_BOLD);
-        	printw("Terminazione Programma - Premere qualsiasi Tasto");
-        	attroff(A_BOLD);
             END=menu.endGame;
     	}
         //wrefresh(stdscr);

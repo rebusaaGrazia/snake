@@ -22,7 +22,7 @@ class WindowScelta {
   public:
     WindowScelta(int n, string name);
 
-    int windowDisplay(string Op[], int length);  // rimanda l'indice delle opzioni che ha a disposizione
+    int windowDisplay(string Op[], int length, int punteggio);  // rimanda l'indice delle opzioni che ha a disposizione
 };
 
 

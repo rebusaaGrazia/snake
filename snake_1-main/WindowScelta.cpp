@@ -19,7 +19,7 @@ WindowScelta::WindowScelta(int n, string Name) {
 };
 
 // window che fa il display a seconda del numero delle opzioni
-int WindowScelta::windowDisplay(string Op[], int length){
+int WindowScelta::windowDisplay(string Op[], int length, int punteggio){
   curs_set(0);
   wclear(win);
   wrefresh(stdscr);
@@ -27,6 +27,7 @@ int WindowScelta::windowDisplay(string Op[], int length){
   int end_loop = false;
   while (end_loop != true) {
     mvwprintw(win, 0, 0, "%s", name.c_str());
+    mvwprintw(win, 8, 2, "Punteggio: %d", punteggio);
     for (int i = 0; i < length; i++) {
       if (i == pointing) {
         wattron(win, A_BOLD);

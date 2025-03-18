@@ -17,7 +17,7 @@ protected:
 public:
     bool endGame;
     GameOver();
-    void display();
+    void display(int punteggio);
 };
 
 

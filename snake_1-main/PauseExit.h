@@ -13,9 +13,9 @@ class PauseExit : public WindowScelta {
 protected:
     string pauseOption[pauseOptions];
 public:
-    bool endGame;
+    bool endGame, aggPunteggio;
     PauseExit();
-    void display();
+    void display(int punteggio);
 };
 
 

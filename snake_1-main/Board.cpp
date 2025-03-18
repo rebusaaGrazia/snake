@@ -4,7 +4,7 @@ using namespace std;
 #include <ncurses.h>
 #include "Board.h"
 #include "Constant.h"
-#include "PausaExit.h"
+#include "PauseExit.h"
 
 Board::Board(): Snake::Snake(){  // >>
   Board::coordApple[0][0] = 0;
@@ -29,13 +29,7 @@ void Board::generateApple() {
         Board::coordApple[0][1] = rand() % cols;
 
         // Verifica se la mela non si sovrappone al corpo del serpente
-        validPosition = true;
-        for (int i = 0; i < snake_length; i++) { // Assuming you have a function to get the length of the snake
-            if (coordApple[0][0] == matrix[i][0] && coordApple[0][1] == matrix[i][1]) {
-                validPosition = false;
-                break;
-            }
-        }
+        validPosition = !(matrix[coordApple[0][0]][coordApple[0][1]] == 1);
     }
 }
 
@@ -104,16 +98,18 @@ int Board::displaySnake(int vel){
         ch = wgetch(win);
         if (Position::Dups() == true) {        // dups controlla se snake ha colpito se stesso
             end = true;
-            mvprintw(0, 0, "%s", "MORTO! - SERPENTE SI E' MORSO");
+            //mvprintw(0, 0, "%s", "MORTO! - SERPENTE SI E' MORSO");
             gameOver = true;
             refresh();
         } else if (ch == 16) {    // ctrl P
-            mvprintw(0, 0, "%s", "PAUSA");
+            //mvprintw(0, 0, "%s", "PAUSA");
             gamePaused = true;
 
             PauseExit pause = PauseExit();
-            pause.display();
-            end = =pause.endGame;
+            pause.display(punteggio);
+            end = pause.endGame;
+            if (pause.aggPunteggio) punteggio=0;	// azzeramento del punteggio
+
             refresh();
         } else {
             if (ch != ERR) {
