@@ -17,10 +17,13 @@ class Menu : WindowScelta{ //CLASSE DI APPOGGIO PER IL MIO PROGETTO
             //PROGETTO FINALE USA QUELLA DI MIRKO GIÀ IMPOSTATA CORRETTAMENTE
 protected:
     string menuOption[2];
+    WINDOW *sfondo;
 public:
     bool endGame;
     Menu();
     void display();
+
+    void background(int row, int col);
 
 };
 

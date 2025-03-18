@@ -6,6 +6,7 @@
 
 class Board: public Snake {
 protected:
+  WINDOW *sfondo;
   WINDOW *win;
 
   int coordApple[1][2];
@@ -15,11 +16,14 @@ public:
   bool exitFromGame;
   Board();
 
+  void backgroundPrint();
+  void printDati(int level, int score, int speed);
+
   void generateApple();
   void displayApple();
-  void displayBoard(int& punteggio);
-  int displaySnake(int vel);
-  void move();
+  void displayBoard(int& punteggio, int speed, int level);
+  int displaySnake(int vel, int level);
+
 
 };
 

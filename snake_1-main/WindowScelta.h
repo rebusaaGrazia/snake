@@ -18,6 +18,7 @@ class WindowScelta {
     WINDOW *win;
     int pointing;
     string name;
+    int x, y;
 
   public:
     WindowScelta(int n, string name);

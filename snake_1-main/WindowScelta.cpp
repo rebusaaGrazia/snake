@@ -10,7 +10,9 @@ using namespace std;
 WindowScelta::WindowScelta(int n, string Name) {
   name=Name;
   numChoices = n;
-  win = standard_win(10, 20);
+  y=10;
+  x=20;
+  win = standard_win(y, x);
   keypad(win, true);
   box(win, 0, 0);
   wrefresh(win);

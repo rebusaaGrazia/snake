@@ -12,11 +12,57 @@ Board::Board(): Snake::Snake(){  // >>
   generateApple();
   gameOver = false;
   exitFromGame = false;
+  sfondo = newwin(rows+8+1, cols+8, xPosCenter-3, yPosCenter-3);
   win = newwin(rows+2, cols+2, xPosCenter, yPosCenter);
   keypad(win, true);
-  init_pair(1, COLOR_RED, COLOR_BLACK);
+  init_pair(1, COLOR_RED, COLOR_BLACK);		// colore mela
+  init_pair(2, COLOR_BLUE, COLOR_BLACK);	// colore scritte e serpente
+  init_pair(3, COLOR_BLACK, COLOR_WHITE);	// colore sfondo
+  init_pair(4, COLOR_WHITE, COLOR_BLACK);	// colore valori
   start_color();
   srand(time(0));
+}
+
+// stampa della finestra di sfondo
+void Board::backgroundPrint(){
+  char ch=' ';
+  wattron(sfondo,A_REVERSE);
+  wattron(sfondo,A_BOLD);
+  wattron(sfondo,COLOR_PAIR(3));
+  // stampa righe sopra e sotto
+  for (int i = 0; i < cols+6; i++) {
+    for (int j = 0; j < 2; j++) {
+      mvwprintw(sfondo, j+1, i+1, "%c", ch);
+      mvwprintw(sfondo, rows+4+j+1, i+1, "%c", ch);
+    }
+  }
+  // stampa colonne laterali
+  for (int i = 0; i < rows+6; i++) {
+    for (int j = 0; j < 2; j++) {
+      mvwprintw(sfondo, i+1, j+1, "%c", ch);
+      mvwprintw(sfondo, i+1, cols+4+j+1, "%c", ch);
+    }
+  }
+  wattroff(sfondo,COLOR_PAIR(3));
+  wattroff(sfondo,A_BOLD);
+  wattroff(sfondo,A_REVERSE);
+}
+
+void Board::printDati(int level, int score, int speed){
+  wattron(sfondo,COLOR_PAIR(2));
+  wattron(sfondo,A_BOLD);
+  mvwprintw(sfondo, rows+7, 3, "Level: ");
+  mvwprintw(sfondo, rows+7, cols/2-2, "Score: ");
+  mvwprintw(sfondo, rows+7, cols-11, "Speed: ");
+  wattroff(sfondo,COLOR_PAIR(2));
+
+
+  wattron(sfondo,COLOR_PAIR(4));
+  mvwprintw(sfondo, rows+7, 3+7, "%d", level);
+  mvwprintw(sfondo, rows+7, cols/2+10-4, "%d", score);
+  mvwprintw(sfondo, rows+7, cols-3, "%d", speed);
+  wattroff(sfondo,COLOR_PAIR(4));
+  wattroff(sfondo,A_BOLD);
 }
 
 // genera casualmente la posizione di $
@@ -45,8 +91,12 @@ void Board::displayApple(){        // >>
 }
 
 // stampa l'area di gioco : serpente e mela
-void Board::displayBoard(int& punteggio){        // >>
+void Board::displayBoard(int& punteggio, int speed, int level){        // >>
+    box(sfondo, 0, 0);
     box(win, 0, 0);
+    //backgroundPrint();
+    printDati(level, punteggio, speed);
+
     char ch;
     bool found=false;
     for (int i = 0; i < rows; i++) {
@@ -80,20 +130,22 @@ void Board::displayBoard(int& punteggio){        // >>
             mvwprintw(win, i+1, j+1, "%c", ch);
             wattroff(win, COLOR_PAIR(2));
             wattroff(win, A_REVERSE);
-            wattron(win, A_BOLD);
+            wattroff(win, A_BOLD);
         }
     }
     if (!found) Board::displayApple(); // se la mela non è stata mangiata (se no sovrapporrebbe al serpente)
+    wrefresh(sfondo);
     wrefresh(win);
 }
 
 // avvia il gioco con risposta ai movimenti dati dall'utente
-int Board::displaySnake(int vel){
+int Board::displaySnake(int vel, int level){
     curs_set(0);
     halfdelay(vel);        // ciò che dipende dal livello
     int direction = 2;
     bool end = false;
     int ch, punteggio=0, sceltaPausa=0;
+    backgroundPrint();
     while (!end) {
         ch = wgetch(win);
         if (Position::Dups() == true) {        // dups controlla se snake ha colpito se stesso
@@ -161,7 +213,7 @@ int Board::displaySnake(int vel){
             }
         }
         mvwprintw(win, 0, 0, "%d", coordApple[0][0]);
-        displayBoard(punteggio);
+        displayBoard(punteggio, vel, level);
         napms(200);
     }
     return punteggio;
