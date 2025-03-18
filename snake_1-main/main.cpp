@@ -16,16 +16,19 @@ int main(int argc, char *argv[]) {
     noecho();
     keypad(stdscr, true);
     int punteggio=0;
-
+    bool ricomincia=false;
     bool END=false;
+
     while (!END) {
         wrefresh(stdscr);
 
       	//menu principale del gioco
-      	Menu menu = Menu();          // << soluzione del non refresh da mirko
-    	menu.display();
-
-    	if (!menu.endGame) {
+        if (!ricomincia){
+      		Menu menu = Menu();          // << soluzione del non refresh da mirko
+    		menu.display();
+            END=menu.endGame;
+		}
+    	if (!END) {
         	Board board = Board();	// da sistemare con le opzioni del menu di mirko
 
         	// devo mandargli velocita di gioco
@@ -37,22 +40,14 @@ int main(int argc, char *argv[]) {
                 gameOver.display(punteggio);
                 //wrefresh(stdscr);
                 END=gameOver.endGame;
+                ricomincia=gameOver.ricomincia;
 
                 // salvataggio dati del livello finito
                 // azzerare tutti i dati del giocatore
 
-    		}else if (board.gamePaused){
-                  // game paused
-                  //wclear(stdscr);
-                  //PauseExit pause = PauseExit();
-                  //pause.display();
-                  //END=pause.endGame;
-                  // nessun azzeramento dei dati
-            }
+    		}else if (board.exitFromGame) END=true;
             //printw("ultimo punteggio: %d", punteggio);
-     	} else if (menu.endGame) {
-            END=menu.endGame;
-    	}
+     	}
         //wrefresh(stdscr);
         wclear(stdscr);
     }

@@ -12,7 +12,7 @@ protected:
 
 public:
   bool gameOver;
-  bool gamePaused;
+  bool exitFromGame;
   Board();
 
   void generateApple();

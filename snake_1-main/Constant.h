@@ -7,11 +7,11 @@
 
 #define menu_options 3
 #define rows 30
-#define cols 60
+#define cols 120
 #define snake_length 6
 
-#define xPosCenter (LINES/2) - rows/2 +1
-#define yPosCenter (COLS/2) - rows/2 +1
+#define xPosCenter (LINES/2) - rows/2 -1
+#define yPosCenter (COLS/2) - cols/2 -1
 
 #define menuOptions 2
 #define pauseOptions 4

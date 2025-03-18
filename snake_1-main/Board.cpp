@@ -11,7 +11,7 @@ Board::Board(): Snake::Snake(){  // >>
   Board::coordApple[0][1] = 0;
   generateApple();
   gameOver = false;
-  gamePaused = false;
+  exitFromGame = false;
   win = newwin(rows+2, cols+2, xPosCenter, yPosCenter);
   keypad(win, true);
   init_pair(1, COLOR_RED, COLOR_BLACK);
@@ -93,7 +93,7 @@ int Board::displaySnake(int vel){
     halfdelay(vel);        // ciò che dipende dal livello
     int direction = 2;
     bool end = false;
-    int ch, punteggio=0;
+    int ch, punteggio=0, sceltaPausa=0;
     while (!end) {
         ch = wgetch(win);
         if (Position::Dups() == true) {        // dups controlla se snake ha colpito se stesso
@@ -101,14 +101,26 @@ int Board::displaySnake(int vel){
             //mvprintw(0, 0, "%s", "MORTO! - SERPENTE SI E' MORSO");
             gameOver = true;
             refresh();
-        } else if (ch == 16) {    // ctrl P
-            //mvprintw(0, 0, "%s", "PAUSA");
-            gamePaused = true;
+        } else if (ch == 16) {    // ctrl P che mette in pausa
 
             PauseExit pause = PauseExit();
-            pause.display(punteggio);
-            end = pause.endGame;
-            if (pause.aggPunteggio) punteggio=0;	// azzeramento del punteggio
+            sceltaPausa=pause.display(punteggio);
+
+            if (sceltaPausa==0 || sceltaPausa==1) {		// >>
+              //Riprendi
+              end = false;
+              //Ricomincia
+              if (sceltaPausa==1) {
+                //mvprintw(0, 0, "%s", "punteggio a 0");
+                generateApple();
+                punteggio=0;
+              }
+            }else{
+              // Torna a Menu
+              end = true;
+              // Esci
+              if (sceltaPausa==3) exitFromGame = true;
+            }
 
             refresh();
         } else {

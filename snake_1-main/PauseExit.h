@@ -15,7 +15,7 @@ protected:
 public:
     bool endGame, aggPunteggio;
     PauseExit();
-    void display(int punteggio);
+    int display(int punteggio);
 };
 
 

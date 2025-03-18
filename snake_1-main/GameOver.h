@@ -15,7 +15,7 @@ class GameOver : public WindowScelta{
 protected:
     string overOption[gameoverOptions];
 public:
-    bool endGame;
+    bool endGame, ricomincia;
     GameOver();
     void display(int punteggio);
 };
