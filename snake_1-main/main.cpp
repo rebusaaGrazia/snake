@@ -6,7 +6,8 @@ using namespace std;
 #include <string>
 #include "Snake.h"
 #include "Board.h"
-#include "Menu.h"
+#include "menu.h"
+#include "Constant.h"
 #include "GameOver.h"
 #include "default_functions.h"
 
@@ -44,10 +45,13 @@ int main(int argc, char *argv[]) {
     initscr();
     refresh();
     noecho();
+    curs_set(0);
     keypad(stdscr, true);
     int punteggio=0;
     bool ricomincia=false;
-    bool END=false;
+    bool END=false, classific=false;
+    const char* voices[3] = {"Nuova partita", "Visualizza classifica", "Esci"};
+    char titolo[50] = "- MENU (seleziona una voce e premi invio) -";
 
     while (!END) {
         wrefresh(stdscr);
@@ -55,15 +59,23 @@ int main(int argc, char *argv[]) {
       	//menu principale del gioco
         if (!ricomincia){
             background(rows, cols);
-      		Menu menu = Menu();          // << soluzione del non refresh da mirko
-    		menu.display();
-            END=menu.endGame;
+
+            Menu menu_generale = Menu(voices, 3);
+      		//Menu menu = Menu();          // << soluzione del non refresh da mirko
+    		//menu.display();
+            menu_generale.display(titolo);
+
+            classific=menu_generale.classificaOpen;
+            END=menu_generale.endGame;
 		}
-    	if (!END) {
+    	if (!END || classific) {
         	Board board = Board();	// da sistemare con le opzioni del menu di mirko
 
         	// devo mandargli velocita di gioco
         	punteggio=board.displaySnake(2, 50);
+
+            if (punteggio!=0) update_file(punteggio);
+
         	if (board.gameOver){
           		// gameOver
                 clear();
