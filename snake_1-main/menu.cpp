@@ -1,9 +1,12 @@
 #include "menu.h"
-
 plist lista_livelli = NULL;
 
 /* ----- IMPLEMENTAZIONE FUNZIONI LISTA BIDIREZIONALE ----- */
 // TODO: implementare funzione per creare livello
+Livello crea_livello(int numero, int velocita, double bonus) {
+  Livello liv = {numero, velocita, bonus};
+  return liv;
+}
 /**
  * @param bilista lista bidirezionale dei livelli
  * @param l livello da aggiungere
@@ -44,10 +47,11 @@ plist ordered_insert(plist bilista, const Livello l) {
  * @return lista aggiornata completa dei livelli
  */
 plist crea_blista(plist bilista) {
-    const int livelli[5] = {1, 2, 3, 4, 5};
+    Livello livelli[5];
+    for (int i = 0; i < 5; i++)
+      livelli[i] = {i + 1, i + 1, 2.5};
     for (int i = 0; i < 5; i++) {
-        Livello l = {livelli[i]};
-        bilista = ordered_insert(bilista, l);
+        bilista = ordered_insert(bilista, livelli[i]);
     }
     return bilista;
 }
@@ -131,6 +135,7 @@ void print_from_list(WINDOW* win, plist list, const int rowss) {
  * @param n_voci numero delle voci presenti nel menu
  */
 Menu::Menu(const char* v[], int n_voci) {
+    livello_scelto = 0;
     lista_livelli = crea_blista(lista_livelli); // crea la lisra dei livelli
     for (int i = 0; i < n_voci; i++) { // colleziona le voci del menu
         voci[i] = v[i];
@@ -139,6 +144,18 @@ Menu::Menu(const char* v[], int n_voci) {
 
     classificaOpen = false;
     endGame = false;
+}
+
+double Menu::get_bonus(int livello) {
+      plist tmp = lista_livelli;
+      while (tmp != NULL && livello != tmp->liv.numero) tmp = tmp->next;
+      return tmp->liv.bonus;
+}
+
+int Menu::get_velocita(int livello) {
+      plist tmp = lista_livelli;
+      while (tmp != NULL && livello != tmp->liv.numero) tmp = tmp->next;
+      return tmp->liv.velocita;
 }
 
 /**
@@ -283,6 +300,7 @@ void Menu::check_scelta(WINDOW* win, const int highlight) {
         strcmp(selected, LIVELLO_3) == 0 || strcmp(selected, LIVELLO_4) == 0 ||
             strcmp(selected, LIVELLO_5) == 0) { // controllo la scelta del livello
         prova_per_livello(highlight + 1);
+        livello_scelto = highlight;
     } else if (strcmp(selected, VOCE_ESCI) == 0)
       endGame = true;
 }

@@ -47,11 +47,12 @@ int main(int argc, char *argv[]) {
     noecho();
     curs_set(0);
     keypad(stdscr, true);
-    int punteggio=0;
+    int punteggio=0, vel=5, liv=1;
     bool ricomincia=false;
     bool END=false, classific=false;
     const char* voices[3] = {"Nuova partita", "Visualizza classifica", "Esci"};
     char titolo[50] = "- MENU (seleziona una voce e premi invio) -";
+
 
     while (!END) {
         wrefresh(stdscr);
@@ -67,14 +68,19 @@ int main(int argc, char *argv[]) {
 
             classific=menu_generale.classificaOpen;
             END=menu_generale.endGame;
+            //liv=menu_generale.get_bonus(menu_generale.livello_scelto);
+            //vel=menu_generale.get_velocita(menu_generale.livello_scelto);
 		}
     	if (!END || classific) {
         	Board board = Board();	// da sistemare con le opzioni del menu di mirko
 
         	// devo mandargli velocita di gioco
-        	punteggio=board.displaySnake(2, 50);
+        	punteggio=board.displaySnake(vel, liv);
 
-            if (punteggio!=0) update_file(punteggio);
+            if (punteggio!=0) {
+
+              update_file(punteggio);
+            }
 
         	if (board.gameOver){
           		// gameOver
