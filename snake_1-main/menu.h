@@ -40,6 +40,7 @@ struct Bilist {
 };
 typedef Bilist* plist;
 
+Livello crea_livello(int numero, int velocita, double bonus);
 /**
  * @param bilista lista bidirezionale dei livelli
  * @param l livello da aggiungere
@@ -73,6 +74,7 @@ protected:
     void prova_per_livello(int livello);
 public:
     bool classificaOpen, endGame;
+    int livello_scelto;
 
     /**
      * @param v array delle voci del menu
@@ -90,6 +92,9 @@ public:
      * @param index indice dell'array da cui proviene
      */
     void get_voce(char level[], int index);
+
+    double get_bonus(int livello);
+    int get_velocita(int livello);
 };
 
 /* ----- DICHIARAZIONE FUNZIONI AUSILIARIE ----- */
