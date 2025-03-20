@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     noecho();
     curs_set(0);
     keypad(stdscr, true);
-    int punteggio=0, vel=5, liv=1;
+    int punteggio=0, vel=2, liv=1, valMela=2;
     bool ricomincia=false;
     bool END=false, classific=false;
     const char* voices[3] = {"Nuova partita", "Visualizza classifica", "Esci"};
@@ -70,15 +70,17 @@ int main(int argc, char *argv[]) {
             END=menu_generale.endGame;
             //liv=menu_generale.get_bonus(menu_generale.livello_scelto);
             //vel=menu_generale.get_velocita(menu_generale.livello_scelto);
+            //valMela=menu_generale.get_valoreMela(menu_generale.livello_scelto);
+
 		}
     	if (!END || classific) {
         	Board board = Board();	// da sistemare con le opzioni del menu di mirko
 
         	// devo mandargli velocita di gioco
-        	punteggio=board.displaySnake(vel, liv);
+        	punteggio=board.displaySnake(vel, liv, valMela);
 
             if (punteggio!=0) {
-
+              // TODO: punteggio da moltiplicare per il bonus del livello
               update_file(punteggio);
             }
 

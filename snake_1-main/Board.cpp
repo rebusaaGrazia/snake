@@ -24,7 +24,8 @@ Board::Board(): Snake::Snake(){  // >>
 }
 
 // stampa della finestra di sfondo
-void Board::backgroundPrint(){
+void Board::backgroundPrint(){    // >>
+  curs_set(0);
   char ch=' ';
   wattron(sfondo,A_REVERSE);
   wattron(sfondo,A_BOLD);
@@ -82,6 +83,7 @@ void Board::generateApple() {
 
 // fa il display della $
 void Board::displayApple(){        // >>
+  curs_set(0);
   start_color();
   init_pair(1, COLOR_RED, COLOR_BLACK);
   wattron(win,COLOR_PAIR(1));
@@ -91,7 +93,8 @@ void Board::displayApple(){        // >>
 }
 
 // stampa l'area di gioco : serpente e mela
-void Board::displayBoard(int& punteggio, int speed, int level){        // >>
+void Board::displayBoard(int& punteggio, int speed, int level, int valMela){        // >>
+    curs_set(0);
     box(sfondo, 0, 0);
     box(win, 0, 0);
     //backgroundPrint();
@@ -113,7 +116,7 @@ void Board::displayBoard(int& punteggio, int speed, int level){        // >>
                   found=true;
 
                   // incremento punteggio
-                  punteggio++;
+                  punteggio= punteggio + valMela;
               }
             }else{
               wattroff(win, A_REVERSE);
@@ -139,7 +142,7 @@ void Board::displayBoard(int& punteggio, int speed, int level){        // >>
 }
 
 // avvia il gioco con risposta ai movimenti dati dall'utente
-int Board::displaySnake(int vel, int level){
+int Board::displaySnake(int vel, int level, int valMela){
     curs_set(0);
     halfdelay(vel);        // ciò che dipende dal livello
     int direction = 2;
@@ -170,6 +173,7 @@ int Board::displaySnake(int vel, int level){
             }else{
               // Torna a Menu
               end = true;
+              punteggio=0;
               // Esci
               if (sceltaPausa==3) exitFromGame = true;
             }
@@ -213,7 +217,7 @@ int Board::displaySnake(int vel, int level){
             }
         }
         mvwprintw(win, 0, 0, "%d", coordApple[0][0]);
-        displayBoard(punteggio, vel, level);
+        displayBoard(punteggio, vel, level, valMela);
         napms(200);
     }
     return punteggio;

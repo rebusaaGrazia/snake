@@ -21,8 +21,8 @@ public:
 
   void generateApple();
   void displayApple();
-  void displayBoard(int& punteggio, int speed, int level);
-  int displaySnake(int vel, int level);
+  void displayBoard(int& punteggio, int speed, int level, int valMela);
+  int displaySnake(int vel, int level, int valMela);
 
 
 };
