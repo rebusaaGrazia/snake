@@ -1,3 +1,0 @@
-/home/graziacomp/Desktop/snake/cmake-build-debug/CMakeFiles/snake.dir
-/home/graziacomp/Desktop/snake/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/graziacomp/Desktop/snake/cmake-build-debug/CMakeFiles/rebuild_cache.dir
