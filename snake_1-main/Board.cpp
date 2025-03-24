@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 #include <cmath>
+#include <ctime>
 #include <ncurses.h>
 #include "Board.h"
 #include "Constant.h"
@@ -21,6 +22,29 @@ Board::Board(): Snake::Snake(){  // >>
   init_pair(4, COLOR_WHITE, COLOR_BLACK);	// colore valori
   start_color();
   srand(time(0));
+  duration=timeGame;
+  before = 0.0;
+  timer = 0.0;
+}
+
+// cast del tempo
+void Board::printTime(){
+  mvwprintw(sfondo, 2, 9, "              ");
+
+  wattron(sfondo,A_BOLD);
+  wattron(sfondo,COLOR_PAIR(2));
+  /*
+  if (((float)(timer)/CLOCKS_PER_SEC)*100 > 60) {
+    min=((float)(timer)/CLOCKS_PER_SEC)*100/60;
+    sec=(int)(((float)(timer)/CLOCKS_PER_SEC*10)-(60*min));
+    mvwprintw(sfondo, 2, 10, "%d min %d sec", min, (int)((float)(timer)/CLOCKS_PER_SEC*100)-60);
+  }else{
+    mvwprintw(sfondo, 2, 10, "%d min %d sec", min, (int)((float)(timer)/CLOCKS_PER_SEC*100));
+  }*/
+  int min=((float)(timer)/CLOCKS_PER_SEC)*100/60;
+  mvwprintw(sfondo, 2, 10, "%d min %d sec", min, (int)((float)(timer)/CLOCKS_PER_SEC*100)-60*min);
+  wattroff(sfondo,COLOR_PAIR(2));
+  wattroff(sfondo,A_BOLD);
 }
 
 // stampa della finestra di sfondo
@@ -47,6 +71,10 @@ void Board::backgroundPrint(){    // >>
   wattroff(sfondo,COLOR_PAIR(3));
   wattroff(sfondo,A_BOLD);
   wattroff(sfondo,A_REVERSE);
+
+  wattron(sfondo,COLOR_PAIR(1));
+  mvwprintw(sfondo, 2, 4, " time: ");
+  wattroff(sfondo,COLOR_PAIR(1));
 }
 
 void Board::printDati(int level, int score, int speed){
@@ -146,10 +174,11 @@ int Board::displaySnake(int vel, int level, int valMela){
     curs_set(0);
     halfdelay(vel);        // ciò che dipende dal livello
     int direction = 2;
-    bool end = false;
+    bool end = false, timeFinish=false;
     int ch, punteggio=0, sceltaPausa=0;
     backgroundPrint();
-    while (!end) {
+    before=clock();
+    while (!end && !timeFinish) {
         ch = wgetch(win);
         if (Position::Dups() == true) {        // dups controlla se snake ha colpito se stesso
             end = true;
@@ -166,6 +195,7 @@ int Board::displaySnake(int vel, int level, int valMela){
               end = false;
               //Ricomincia
               if (sceltaPausa==1) {
+                before=clock();
                 //mvprintw(0, 0, "%s", "punteggio a 0");
                 generateApple();
                 punteggio=0;
@@ -219,6 +249,14 @@ int Board::displaySnake(int vel, int level, int valMela){
         mvwprintw(win, 0, 0, "%d", coordApple[0][0]);
         displayBoard(punteggio, vel, level, valMela);
         napms(200);
+        timer = clock() - before;
+        if ( (float)timer/CLOCKS_PER_SEC > duration ) {
+          //end=true;
+          timeFinish=true;
+          gameOver=true;
+        }
+
+        printTime();
     }
     return punteggio;
 }

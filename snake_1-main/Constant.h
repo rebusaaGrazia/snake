@@ -16,6 +16,7 @@
 #define menuOptions 2
 #define pauseOptions 4
 #define gameoverOptions 3
+#define timeGame 0.7
 
 // massimo delle voci possibili in un menù
 #define MAX_VOCI 10

@@ -47,12 +47,11 @@ int main(int argc, char *argv[]) {
     noecho();
     curs_set(0);
     keypad(stdscr, true);
-    int punteggio=0, vel=2, liv=1, valMela=2;
+    int punteggio=0, vel=2, liv=1, valMela=2, bonus=10;
     bool ricomincia=false;
     bool END=false, classific=false;
     const char* voices[3] = {"Nuova partita", "Visualizza classifica", "Esci"};
     char titolo[50] = "- MENU (seleziona una voce e premi invio) -";
-
 
     while (!END) {
         wrefresh(stdscr);
@@ -61,9 +60,8 @@ int main(int argc, char *argv[]) {
         if (!ricomincia){
             background(rows, cols);
 
+            //menu
             Menu menu_generale = Menu(voices, 3);
-      		//Menu menu = Menu();          // << soluzione del non refresh da mirko
-    		//menu.display();
             menu_generale.display(titolo);
 
             classific=menu_generale.classificaOpen;
@@ -74,13 +72,15 @@ int main(int argc, char *argv[]) {
 
 		}
     	if (!END || classific) {
+            // area di gioco
+            clear();
         	Board board = Board();	// da sistemare con le opzioni del menu di mirko
 
         	// devo mandargli velocita di gioco
         	punteggio=board.displaySnake(vel, liv, valMela);
 
             if (punteggio!=0) {
-              // TODO: punteggio da moltiplicare per il bonus del livello
+              punteggio=punteggio*bonus;
               update_file(punteggio);
             }
 
@@ -89,28 +89,16 @@ int main(int argc, char *argv[]) {
                 clear();
                 GameOver gameOver = GameOver();
                 gameOver.display(punteggio);
-                //wrefresh(stdscr);
                 END=gameOver.endGame;
                 ricomincia=gameOver.ricomincia;
 
-                // salvataggio dati del livello finito
-                // azzerare tutti i dati del giocatore
-
     		}else if (board.exitFromGame) END=true;
-            //printw("ultimo punteggio: %d", punteggio);
      	}
-        //wrefresh(stdscr);
         wclear(stdscr);
     }
-
-
-
     wrefresh(stdscr);
 
-
-
     getch();
-    //delwin(board);
     endwin();
     return 0;
 }

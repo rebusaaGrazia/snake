@@ -24,7 +24,7 @@ WindowScelta::WindowScelta(int n, string Name) {
 int WindowScelta::windowDisplay(string Op[], int length, int punteggio){
   curs_set(0);
   wclear(win);
-  wrefresh(stdscr);
+  //wrefresh(stdscr);
   box(win, 0, 0);
   int end_loop = false;
   while (end_loop != true) {
