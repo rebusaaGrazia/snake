@@ -2,7 +2,7 @@
 // Created by graziacomp on 3/15/25.
 //
 
-#include "GameOver.h"
+#include "GameOver.hpp"
 
 GameOver :: GameOver() : WindowScelta(gameoverOptions, "Game Over") {
 

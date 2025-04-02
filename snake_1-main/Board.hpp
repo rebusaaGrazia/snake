@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "Snake.h"
+#include "Snake.hpp"
 #include <ncurses.h>
 
 class Board: public Snake {
@@ -29,7 +29,6 @@ public:
   int displaySnake(int vel, int level, int valMela);
 
   void printTime();
-
 
 };
 

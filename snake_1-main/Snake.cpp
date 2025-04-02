@@ -1,7 +1,7 @@
 //
 // Created by Gabriele Preti on 02/03/25.
 //
-#include "Snake.h"
+#include "Snake.hpp"
 #include <iostream>
 using namespace std;
 

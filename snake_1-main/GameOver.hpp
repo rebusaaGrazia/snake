@@ -8,8 +8,8 @@
 #include <iostream>
 using namespace std;
 #include <ncurses.h>
-#include "Constant.h"
-#include "WindowScelta.h"
+#include "Constant.hpp"
+#include "WindowScelta.hpp"
 
 class GameOver : public WindowScelta{
 protected:

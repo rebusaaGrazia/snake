@@ -3,9 +3,9 @@
 //
 #include <iostream>
 using namespace std;
-#include "WindowScelta.h"
+#include "WindowScelta.hpp"
 #include <ncurses.h>
-#include "default_functions.h"
+#include "default_functions.hpp"
 
 WindowScelta::WindowScelta(int n, string Name) {
   name=Name;

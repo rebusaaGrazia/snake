@@ -1,4 +1,4 @@
-#include "PauseExit.h"
+#include "PauseExit.hpp"
 
 PauseExit::PauseExit() : WindowScelta(pauseOptions, "Pausa"){
 

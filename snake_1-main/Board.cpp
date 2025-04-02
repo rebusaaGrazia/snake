@@ -3,22 +3,24 @@ using namespace std;
 #include <cmath>
 #include <ctime>
 #include <ncurses.h>
-#include "Board.h"
-#include "Constant.h"
-#include "PauseExit.h"
+#include "Board.hpp"
+#include "Constant.hpp"
+#include "PauseExit.hpp"
 
-Board::Board(): Snake::Snake(){  // >>
+Board::Board(): Snake::Snake(){  // costruttore
   Board::coordApple[0][0] = 0;
   Board::coordApple[0][1] = 0;
-  generateApple();
+  generateApple();  // generatore casuale delle coordinate della mela
   gameOver = false;
   exitFromGame = false;
+  // creazione delle finestre
   sfondo = newwin(rows+8+1, cols+8, xPosCenter-3, yPosCenter-3);
   win = newwin(rows+2, cols+2, xPosCenter, yPosCenter);
   keypad(win, true);
+  // COLORI:
   init_pair(1, COLOR_RED, COLOR_BLACK);		// colore mela
   init_pair(2, COLOR_BLUE, COLOR_BLACK);	// colore scritte e serpente
-  init_pair(3, COLOR_BLACK, COLOR_WHITE);	// colore sfondo
+  init_pair(3, COLOR_GREEN, COLOR_GREEN);	// colore sfondo
   init_pair(4, COLOR_WHITE, COLOR_BLACK);	// colore valori
   start_color();
   srand(time(0));
@@ -27,20 +29,11 @@ Board::Board(): Snake::Snake(){  // >>
   timer = 0.0;
 }
 
-// cast del tempo
+// cast del tempo e print
 void Board::printTime(){
   mvwprintw(sfondo, 2, 9, "              ");
-
   wattron(sfondo,A_BOLD);
   wattron(sfondo,COLOR_PAIR(2));
-  /*
-  if (((float)(timer)/CLOCKS_PER_SEC)*100 > 60) {
-    min=((float)(timer)/CLOCKS_PER_SEC)*100/60;
-    sec=(int)(((float)(timer)/CLOCKS_PER_SEC*10)-(60*min));
-    mvwprintw(sfondo, 2, 10, "%d min %d sec", min, (int)((float)(timer)/CLOCKS_PER_SEC*100)-60);
-  }else{
-    mvwprintw(sfondo, 2, 10, "%d min %d sec", min, (int)((float)(timer)/CLOCKS_PER_SEC*100));
-  }*/
   int min=((float)(timer)/CLOCKS_PER_SEC)*100/60;
   mvwprintw(sfondo, 2, 10, "%d min %d sec", min, (int)((float)(timer)/CLOCKS_PER_SEC*100)-60*min);
   wattroff(sfondo,COLOR_PAIR(2));
@@ -48,11 +41,11 @@ void Board::printTime(){
 }
 
 // stampa della finestra di sfondo
-void Board::backgroundPrint(){    // >>
+void Board::backgroundPrint(){
   curs_set(0);
   char ch=' ';
-  wattron(sfondo,A_REVERSE);
-  wattron(sfondo,A_BOLD);
+  init_pair(3, COLOR_GREEN, COLOR_GREEN);     // colore dello sfondo
+  wattron(sfondo, A_REVERSE);
   wattron(sfondo,COLOR_PAIR(3));
   // stampa righe sopra e sotto
   for (int i = 0; i < cols+6; i++) {
@@ -69,14 +62,14 @@ void Board::backgroundPrint(){    // >>
     }
   }
   wattroff(sfondo,COLOR_PAIR(3));
-  wattroff(sfondo,A_BOLD);
-  wattroff(sfondo,A_REVERSE);
+  wattroff(sfondo, A_REVERSE);
 
   wattron(sfondo,COLOR_PAIR(1));
   mvwprintw(sfondo, 2, 4, " time: ");
   wattroff(sfondo,COLOR_PAIR(1));
 }
 
+// stampa dei dati del livello, punteggio aggiornato e velocità del serpente
 void Board::printDati(int level, int score, int speed){
   wattron(sfondo,COLOR_PAIR(2));
   wattron(sfondo,A_BOLD);
@@ -84,7 +77,6 @@ void Board::printDati(int level, int score, int speed){
   mvwprintw(sfondo, rows+7, cols/2-2, "Score: ");
   mvwprintw(sfondo, rows+7, cols-11, "Speed: ");
   wattroff(sfondo,COLOR_PAIR(2));
-
 
   wattron(sfondo,COLOR_PAIR(4));
   mvwprintw(sfondo, rows+7, 3+7, "%d", level);
@@ -94,23 +86,22 @@ void Board::printDati(int level, int score, int speed){
   wattroff(sfondo,A_BOLD);
 }
 
-// genera casualmente la posizione di $
-// modifica alla funzione generateApple
+// genera casualmente la posizione della mela
 void Board::generateApple() {
     bool validPosition = false;
 
+    // Verifica se la mela non si sovrappone al corpo del serpente
     while (!validPosition) {
         Board::coordApple[0][0] = rand() % rows;
         Board::coordApple[0][1] = rand() % cols;
 
-        // Verifica se la mela non si sovrappone al corpo del serpente
         validPosition = !(matrix[coordApple[0][0]][coordApple[0][1]] == 1);
     }
 }
 
 
-// fa il display della $
-void Board::displayApple(){        // >>
+// fa il display della mela
+void Board::displayApple(){
   curs_set(0);
   start_color();
   init_pair(1, COLOR_RED, COLOR_BLACK);
@@ -121,15 +112,15 @@ void Board::displayApple(){        // >>
 }
 
 // stampa l'area di gioco : serpente e mela
-void Board::displayBoard(int& punteggio, int speed, int level, int valMela){        // >>
+void Board::displayBoard(int& punteggio, int speed, int level, int valMela){
     curs_set(0);
     box(sfondo, 0, 0);
     box(win, 0, 0);
-    //backgroundPrint();
     printDati(level, punteggio, speed);
 
     char ch;
     bool found=false;
+    // stampa del serpente e della mela controllando i dati della matrice
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
           	wattron(win,A_REVERSE);
@@ -155,6 +146,7 @@ void Board::displayBoard(int& punteggio, int speed, int level, int valMela){    
               wattroff(win, A_REVERSE);			// evidenzio il serpente
               found=false;
             }
+            // stampa del carattere a seconda dei valori in matrice
             init_pair(2, COLOR_BLUE, COLOR_BLACK);
             wattron(win, A_BOLD);
             wattron(win,COLOR_PAIR(2));
@@ -164,54 +156,57 @@ void Board::displayBoard(int& punteggio, int speed, int level, int valMela){    
             wattroff(win, A_BOLD);
         }
     }
-    if (!found) Board::displayApple(); // se la mela non è stata mangiata (se no sovrapporrebbe al serpente)
+    // se la mela non è stata mangiata viene stampata (se no sovrapporrebbe al serpente)
+    if (!found) Board::displayApple();
     wrefresh(sfondo);
     wrefresh(win);
 }
 
 // avvia il gioco con risposta ai movimenti dati dall'utente
+// vengono presi in input velocità, num livello e il valore della mela
 int Board::displaySnake(int vel, int level, int valMela){
     curs_set(0);
-    halfdelay(vel);        // ciò che dipende dal livello
+    halfdelay(vel);
     int direction = 2;
     bool end = false, timeFinish=false;
     int ch, punteggio=0, sceltaPausa=0;
+
+    // print dello sfondo
     backgroundPrint();
-    before=clock();
+    before=clock();   // inizio del conto del tempo di gioco
     while (!end && !timeFinish) {
         ch = wgetch(win);
-        if (Position::Dups() == true) {        // dups controlla se snake ha colpito se stesso
-            end = true;
-            //mvprintw(0, 0, "%s", "MORTO! - SERPENTE SI E' MORSO");
-            gameOver = true;
-            refresh();
-        } else if (ch == 16) {    // ctrl P che mette in pausa
+        refresh();
+        if (Position::Dups() == true) {
+          //serpente morto
+          end = true;
+          gameOver = true;
+          refresh();
+        } else if (ch == 16) {    
+          // ctrl P che mette in pausa
+          PauseExit pause = PauseExit();
+          sceltaPausa=pause.display(punteggio);
 
-            PauseExit pause = PauseExit();
-            sceltaPausa=pause.display(punteggio);
-
-            if (sceltaPausa==0 || sceltaPausa==1) {		// >>
-              //Riprendi
-              end = false;
-              //Ricomincia
-              if (sceltaPausa==1) {
-                before=clock();
-                //mvprintw(0, 0, "%s", "punteggio a 0");
-                generateApple();
-                punteggio=0;
-              }
-            }else{
-              // Torna a Menu
-              end = true;
-              punteggio=0;
-              // Esci
-              if (sceltaPausa==3) exitFromGame = true;
+          if (sceltaPausa==0 || sceltaPausa==1) {		// scelta della finestra pausa
+            //Riprendi
+            end = false;
+            //Ricomincia
+            if (sceltaPausa==1) {
+              before=clock();   // ricomincia il tempo
+              generateApple();  // si generano nuove coordinate
+              punteggio=0;      // si azzera il punteggio
             }
-
-            refresh();
+          }else{
+            // Torna a Menu
+            end = true;
+            punteggio=0;  // non si salva in classifica
+            // Esci
+            if (sceltaPausa==3) exitFromGame = true;
+          }
+          refresh();
         } else {
             if (ch != ERR) {
-                switch (ch) {
+                switch (ch) {     // controllo che il serpente non colpisca la sua coda
                     case KEY_UP:
                         if (direction != -1){ direction = 1;}
                         end = Position::Dups();
@@ -231,10 +226,9 @@ int Board::displaySnake(int vel, int level, int valMela){
                     default:
                         break;
                 }
-            }
+            }   // movimento a seconda della chiave data in tastiera
             if (direction == 1){
-                Snake::moveup();
-
+                Snake::moveup();    // movimenti gestiti in Snake.hpp
             }
             else if (direction == -1){
                 Snake::movedown();
@@ -247,15 +241,15 @@ int Board::displaySnake(int vel, int level, int valMela){
             }
         }
         mvwprintw(win, 0, 0, "%d", coordApple[0][0]);
+        // stampa aggiornata del movimento effettuato
         displayBoard(punteggio, vel, level, valMela);
         napms(200);
         timer = clock() - before;
         if ( (float)timer/CLOCKS_PER_SEC > duration ) {
-          //end=true;
           timeFinish=true;
           gameOver=true;
         }
-
+        // stampa aggiornata del tempo
         printTime();
     }
     return punteggio;

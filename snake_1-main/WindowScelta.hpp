@@ -7,7 +7,7 @@
 
 #include <iostream>
 using namespace std;
-#include "Constant.h"
+#include "Constant.hpp"
 #include <ncurses.h>
 
 // classe suprema per le finestre

@@ -5,7 +5,7 @@
  * Controllo su che sistema operativo viene eseguito il programma e,
  * in base all'esito, cambio l'import della libreria per adattarsi a
  * MINGW, WSL, UNIX (Linux e MacOS)
- */
+*/
 
 #ifdef _WIN32
     #ifdef __MINGW32__
@@ -18,41 +18,14 @@
 #endif
 
 // Librerie necessarie in tutto il programma
-#include "costanti.h"
+#include "Constant.hpp"
 #include <iostream>
 #include <fstream>
 #include <ctime>
 #include <cstring>
+#include "Levels.hpp"
 
 using namespace std;
-
-
-/* ----- DICHIARAZIONI E FUNZIONI PER LA LISTA DEI LIVELLI ----- */
-struct Livello {
-    int numero;
-    int velocita;
-    double bonus;
-};
-struct Bilist {
-    Livello liv;
-    Bilist* prec;
-    Bilist* next;
-};
-typedef Bilist* plist;
-
-Livello crea_livello(int numero, int velocita, double bonus);
-/**
- * @param bilista lista bidirezionale dei livelli
- * @param l livello da aggiungere
- * @return lista aggiornata
- */
-plist ordered_insert(plist bilista, Livello l);
-
-/**
- * @param bilista lista bidirezionale dei livelli
- * @return lista aggiornata completa dei livelli
- */
-plist crea_blista(plist bilista);
 
 /* ----- DICHIARAZIONE DELLA CLASSE MENU ----- */
 class Menu {
@@ -74,8 +47,6 @@ protected:
     void prova_per_livello(int livello);
 public:
     bool classificaOpen, endGame;
-    int livello_scelto;
-
     /**
      * @param v array delle voci del menu
      * @param n_voci numero delle voci presenti nel menu
@@ -92,9 +63,6 @@ public:
      * @param index indice dell'array da cui proviene
      */
     void get_voce(char level[], int index);
-
-    double get_bonus(int livello);
-    int get_velocita(int livello);
 };
 
 /* ----- DICHIARAZIONE FUNZIONI AUSILIARIE ----- */

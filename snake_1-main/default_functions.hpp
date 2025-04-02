@@ -1,5 +1,5 @@
 //
-// Created by Gabriele Preti on 02/03/25.
+// Created by Gabriele Preti
 //
 
 #ifndef DEFAULT_FUNCTIONS_H

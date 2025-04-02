@@ -6,10 +6,10 @@
 #define SNAKE_H
 #include <ncurses.h>
 #include <iostream>
-#include "default_functions.h"
-#include "Position.h"
+#include "default_functions.hpp"
+#include "Position.hpp"
 using namespace std;
-#include "Constant.h"
+#include "Constant.hpp"
 
 class Snake : public Position {
 protected:
