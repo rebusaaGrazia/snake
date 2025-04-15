@@ -4,11 +4,6 @@
 plist lista_livelli = NULL;
 
 
-Livello Levels::crea_livello(int numero, int velocita, double bonus, int mela) {
-    Livello liv = {numero, velocita, mela, bonus};
-    return liv;
-}
-
 plist Levels::ordered_insert(plist bilista, const Livello l) {
     // Caso base: lista vuota, crea il primo nodo
     if (bilista == NULL) {

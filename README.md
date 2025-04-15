@@ -27,4 +27,8 @@ Before you run the project, make sure you have the following installed on your s
 1. Clone the repository:
    ```bash
    git clone https://github.com/rebusaaGrazia/snake.git
+<<<<<<< HEAD
    cd snake_1-main
+=======
+   cd snake_1-main
+>>>>>>> 2504211278fd99d8c7531ecf54661e2255997e14

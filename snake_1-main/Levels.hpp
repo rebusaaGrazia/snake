@@ -21,7 +21,6 @@ typedef Bilist* plist;
 
 class Levels {
 protected:
-    Livello crea_livello(int numero, int velocita, double bonus, int mela);
     plist ordered_insert(plist bilista, Livello l);
     plist crea_blista(plist bilista);
     int livello_scelto;

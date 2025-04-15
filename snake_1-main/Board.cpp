@@ -25,6 +25,8 @@ Board::Board(): Snake::Snake(){  // costruttore
   start_color();
   srand(time(0));
   duration=timeGame;
+  wattroff(win, A_REVERSE);
+  wattroff(sfondo, A_REVERSE);
   before = 0.0;
   timer = 0.0;
 }
@@ -252,5 +254,6 @@ int Board::displaySnake(int vel, int level, int valMela){
         // stampa aggiornata del tempo
         printTime();
     }
+    cbreak();
     return punteggio;
 }

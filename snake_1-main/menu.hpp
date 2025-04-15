@@ -44,7 +44,7 @@ protected:
      */
     void scelta_classifica(WINDOW* win);
     void scelta_partita();
-    void prova_per_livello(int livello);
+    void prova_per_livello(int livello, WINDOW *win);
 public:
     bool classificaOpen, endGame;
     /**
@@ -70,7 +70,7 @@ public:
 /**
 * @param punteggio punteggio totalizzato durante la paratita
 */
-void update_file(int punteggio);
+void update_file(int punteggio, time_t data);
 
 /**
  * @param w finestra di gioco con parametri sempre uguali
@@ -88,6 +88,7 @@ void print_from_list(WINDOW* w, plist list, int rowss);
 /* ----- LISTA PER AGGIORNARE FILE ----- */
 struct ClassificaNode {
     int punteggio;
+    time_t data;
     ClassificaNode* next;
 };
 typedef ClassificaNode* clist;
@@ -104,6 +105,13 @@ clist crea_lista(char nome_file[], clist lista);
  * @param punteggio totale del punteggio realizzato
  * @return lista aggiornata in modo ordinato
  */
-clist ordered_insert(clist lista, int punteggio);
+clist ordered_insert(clist lista, int punteggio, time_t data);
 
+/**
+ * Funzione necessaria per il parsing della data per la stampa della classifica
+ * con anche la data nella quale si è ottenuto il punteggio
+ * @param mese viene passato il mese nel formato "Jan" o "Dec"
+ * @return numero del mese: 0 = gennaio, ... , 11 = dicembre
+ */
+int mese_da_nome(const char* mese);
 #endif //MENU_H

@@ -1,5 +1,6 @@
 #include "menu.hpp"
 #include "Levels.hpp"
+
 /* ----- IMPLEMENTAZIONE FUNZIONI AUSILIARIE ----- */
 /**
  * @param win finestra di gioco con parametri sempre uguali
@@ -22,8 +23,7 @@ void print_from_file(WINDOW* win, char file_name[]) {
     mvwprintw(win, 1, 1, "Classifica:");
     refresh();
     wrefresh(win);
-
-    while (file.getline(ch, sizeof(ch))) { // scrivo riga per riga della classifica
+    while (file.getline(ch, sizeof(ch))) {      
         mvwprintw(win, riga, 1, "%s", ch);
         refresh();
         wrefresh(win);
@@ -104,7 +104,6 @@ void Menu::scelta_classifica(WINDOW* win) {
     char nome_file[40] = "classifica.txt";
     print_from_file(win, nome_file);
     classificaOpen = true;
-    getch();
 }
 
 /**
@@ -115,10 +114,11 @@ void Menu::scelta_classifica(WINDOW* win) {
  * @param punteggio totale del punteggio realizzato
  * @return lista aggiornata in modo ordinato
  */
-clist ordered_insert(clist lista, int punteggio) {
+clist ordered_insert(clist lista, int punteggio, time_t data) {
     if (lista == NULL) {
         clist n = new ClassificaNode;
         n->punteggio = punteggio;
+        n->data = data;
         n->next = NULL;
         return n;
     }
@@ -127,13 +127,27 @@ clist ordered_insert(clist lista, int punteggio) {
     if (punteggio > lista->punteggio) {
         clist new_element = new ClassificaNode;
         new_element->punteggio = punteggio;
+        new_element->data = data;
         new_element->next = lista;
         return new_element;  // Il nuovo elemento diventa la nuova testa
     }
 
     // Se il nuovo punteggio è minore, proseguo ricorsivamente
-    lista->next = ordered_insert(lista->next, punteggio);
+    lista->next = ordered_insert(lista->next, punteggio, data);
     return lista;
+}
+
+// Funzione di supporto per convertire il nome del mese in numero (0 = Gennaio, ..., 11 = Dicembre)
+int mese_da_nome(const char* mese) {
+    const char* mesi[] = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+    for (int i = 0; i < 12; ++i) {
+        if (strcmp(mesi[i], mese) == 0)
+            return i; // ritorna il numero del mese
+    }
+    return -1; // errore: mese non trovato
 }
 
 /**
@@ -144,20 +158,57 @@ clist ordered_insert(clist lista, int punteggio) {
  * @return lista aggiornata (completa)
  */
 clist crea_lista(char nome_file[], clist lista) {
-    // creo una lista di appoggio per inserire correttamente il nuovo punteggio
-    // leggendo prima i punteggi precedenti salvati nel file
-    ifstream file_classifica(nome_file);
+    ifstream file_classifica(nome_file); // apre il file in lettura
     if (!file_classifica) {
         cerr << "Errore: impossibile aprire il file " << nome_file << endl;
-        return lista; // Ritorna la lista vuota se il file non esiste
+        return lista; // se non esiste, ritorna la lista vuota
     }
 
-    // creo la lista con ogni elemento del file
-    int punto;
-    while (file_classifica >> punto) {
-        lista = ordered_insert(lista, punto);
+    int punteggio; // per il punteggio
+    char dash; // per il trattino "-"
+    char giorno_sett[4]; // giorno della settimana (es. "Wed")
+    char mese_str[4]; // mese (es. "Apr")
+    int giorno; // giorno del mese
+    int ore, minuti, secondi; // orario
+    int anno; // anno
+
+    // Cicla su ogni riga del file
+    while (file_classifica >> punteggio >> dash) {
+        file_classifica.get(); // salta lo spazio dopo il trattino
+        
+        // ----- LETTURA RIGA ----- //
+        // Esempio riga: 4 - Wed Apr 09 10:01:26 2025
+        // Estrae i componenti della data uno alla volta
+        file_classifica >> giorno_sett >> mese_str >> giorno;
+        file_classifica.ignore(); // salta spazio
+        file_classifica >> ore; // ore
+        file_classifica.ignore(); // salta ":"
+        file_classifica >> minuti; // minuti
+        file_classifica.ignore(); // salta ":"
+        file_classifica >> secondi; // secondi
+        file_classifica >> anno; // anno
+
+        // Costruisce la struttura tm con i valori letti
+        // tm è sempre una variabile per il tempo, ma a differenza di time_t che salva
+        // il numero di millisecondi trascorsi da 01/01/1970, salva la data
+        // in un formato leggibile e comprensibile
+        struct tm tm_data = {};
+        memset(&tm_data, 0, sizeof(tm_data));
+        tm_data.tm_year = anno - 1900; // anno: 2025 -> 125
+        tm_data.tm_mon = mese_da_nome(mese_str); // mese: "Apr" -> 3
+        tm_data.tm_mday = giorno;
+        tm_data.tm_hour = ore;
+        tm_data.tm_min = minuti;
+        tm_data.tm_sec = secondi;
+
+        // Converte tm in time_t
+        time_t data = timegm(&tm_data); //per MAC/Linux/WSL
+        //time_t data = mktime(&tm_data);
+        // Inserisce ordinatamente nella lista
+        lista = ordered_insert(lista, punteggio, data);
     }
-    file_classifica.close();
+
+    file_classifica.close(); // chiude il file
     return lista;
 }
 
@@ -167,11 +218,11 @@ clist crea_lista(char nome_file[], clist lista) {
  *
  * @param punteggio punteggio totalizzato durante la paratita
  */
-void update_file(const int punteggio) {
+void update_file(const int punteggio, time_t data) {
     // lettura del file ed inserimento dei livelli all'interno di una lista
     char nome_file[50] = "classifica.txt";
     clist lista = crea_lista(nome_file, NULL);
-    lista = ordered_insert(lista, punteggio);
+    lista = ordered_insert(lista, punteggio, data);
 
     // riscrittura del file
     ofstream file(nome_file, ios::trunc); // Svuota e riscrive
@@ -180,7 +231,7 @@ void update_file(const int punteggio) {
         return;
     }
     while (lista != NULL) {
-        file << lista->punteggio << endl;
+        file << lista->punteggio << " - " << asctime(localtime(&lista->data)) << endl;
         lista = lista->next;
     }
     file.close();
@@ -194,7 +245,7 @@ void Menu::scelta_partita() {
     menu_livelli.display(titolo);
 }
 
-void Menu::prova_per_livello(const int livello) {
+void Menu::prova_per_livello(const int livello, WINDOW *win) {
     initscr();
     noecho();
     int yMax, xMax;
@@ -205,14 +256,14 @@ void Menu::prova_per_livello(const int livello) {
     lvs.set_livello_selezionato(livello); // PARAMETRO DA VEDERE NELL'altro file
 
     // newwin(altezza, larghezza, inizio_Y, inizio_X)
-    WINDOW *menu = newwin(10, xMax/2, yMax/4, xMax/4);
-    werase(menu);
-    box(menu, 0, 0);
+    werase(win);
+    wattroff(win, A_REVERSE);
+    box(win, 0, 0);
     refresh();
-    wrefresh(menu);
-    mvwprintw(menu, 1, 8, "- LIVELLO %d", livello);
+    wrefresh(win);
+    mvwprintw(win, rows/4, cols/8, "LIVELLO SCELTO: %d, PREMI INVIO E BUONA FORTUNA!", livello);
     refresh();
-    wrefresh(menu);
+    wrefresh(win);
     getch();
     endwin();
 }
@@ -234,7 +285,7 @@ void Menu::check_scelta(WINDOW* win, const int highlight) {
     } else if (strcmp(selected, LIVELLO_1) == 0 || strcmp(selected, LIVELLO_2) == 0 ||
         strcmp(selected, LIVELLO_3) == 0 || strcmp(selected, LIVELLO_4) == 0 ||
             strcmp(selected, LIVELLO_5) == 0) { // controllo la scelta del livello
-        prova_per_livello(highlight + 1);
+        prova_per_livello(highlight + 1, win);
     } else if (strcmp(selected, VOCE_ESCI) == 0)
       endGame = true;
 }
@@ -252,7 +303,7 @@ void Menu::display(char title[]) {
 
     // newwin(altezza, larghezza, inizio_Y, inizio_X)
     // crea una finestra centrata nello schermo
-    WINDOW *menu = newwin(10, xMax/2, yMax/4, xMax/4);
+    WINDOW *menu = newwin(rows/2, (cols/3)*2, (LINES/2)-(rows/4)-1, (COLS/2)-((cols/6)*2)-1);
     box(menu, 0, 0);
     refresh();
     wrefresh(menu);

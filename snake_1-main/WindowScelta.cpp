@@ -31,11 +31,12 @@ int WindowScelta::windowDisplay(string Op[], int length, int punteggio){
     mvwprintw(win, 0, 0, "%s", name.c_str());
     mvwprintw(win, 8, 2, "Punteggio: %d", punteggio);
     for (int i = 0; i < length; i++) {
+      wattroff(win, A_REVERSE); // disattiva stili
       if (i == pointing) {
-        wattron(win, A_BOLD);
+        wattron(win, A_REVERSE);
       }
       mvwprintw(win, i + 1, 2, "%s", Op[i].c_str());
-      wattroff(win,A_BOLD);
+      wattroff(win,A_REVERSE);
     }
     wrefresh(win);
     int ch = wgetch(win);
